@@ -1,0 +1,31 @@
+#《开讲啦 冠璋》网课分享代码，使用方法请关注B站 “南四环西路”，谢谢。
+library(pheatmap)
+"dat = read.delim(file.choose(), head=T, row.names = 1) #读取dat"
+"anno_col = read.delim(file.choose(), head=T, row.names = 1) #读取anno"
+#修改annotation颜色：
+"Histology=c('lightgreen','coral1','gold1','lightpink1','firebrick1','bisque','aquamarine1')  ##给Subtype赋两种颜色"
+"names(Histology) = c(""A"", ""AA"", ""AO"", ""AOA"", ""GBM"", ""O"", ""OA"")##给Subtype定义两个名字"
+
+"Grade=c('royalblue1','gold2','firebrick1')  ##给Subtype赋两种颜色"
+"names(Grade) = c(""II"", ""III"", ""IV"")##给MGMT定义两个名字"
+
+"Subtype=c('forestgreen','firebrick1','goldenrod1','dodgerblue1')  ##给Subtype赋两种颜色"
+"names(Subtype) = c(""Classical"", ""Mesenchymal"", ""Neural"", ""Proneural"")##给Subtype定义两个名字"
+
+"Gender=c('deeppink1','cyan1')  ##给Subtype赋两种颜色"
+"names(Gender) = c(""Female"", ""Male"")##给Subtype定义两个名字"
+
+"IDH=c('goldenrod1','darkseagreen2')  ##给Subtype赋两种颜色"
+"names(IDH) = c('Mutant','Wildtype' )##给Subtype定义两个名字"
+
+"C1p19q=c('darkorange','darkolivegreen2')  ##给Subtype赋两种颜色"
+"names(C1p19q) = c('Codel','Noncodel' )##给Subtype定义两个名字"
+
+"MGMT=c('darkorchid2','cadetblue2')  ##给Subtype赋两种颜色"
+"names(MGMT) = c('Methylated','Unmethylated' )##给Subtype定义两个名字"
+
+"anno_colors = list(Histology = Histology,Grade=Grade, Subtype=Subtype, Gender=Gender, IDH=IDH, C1p19q=C1p19q,MGMT=MGMT)###将刚刚定义的Subtype(前)颜色赋给annotation中的Subtype项"
+#在绘图时添加annotation_colors=anno_colors命令。
+"pheatmap(dat,annotation_col=anno_col,"
+"         border_color = ""grey"",cluster_cols=F, cluster_rows=F,show_rownames = F, annotation_colors=anno_colors,"
+"         show_colnames = F ,breaks=c(seq(-2.2,2.2,by=0.05)))"

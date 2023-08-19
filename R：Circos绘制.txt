@@ -1,0 +1,39 @@
+#《开讲啦 冠璋》网课分享代码，使用方法请关注B站 “南四环西路”，谢谢。
+"dat = read.delim(file.choose(), row.names = 1)"
+k = c()
+R = rownames(dat)
+for (k in 1:length(rownames(dat))){
+  r = c()
+  for (i in 1: length(rownames(dat))){
+"    a = as.numeric(dat[k, ])"
+"    b = as.numeric(dat[i, ])"
+"    r = c(r, cor(a, b))"
+  }
+"  R = cbind(R, r)"
+}
+"write.table(R, 'R.txt', sep = '\t', quot = F)"
+
+#circos绘制，读取上述R值矩阵，把矩阵中第一行的“r”改为各基因名
+library(circlize)
+"dat = read.delim(file.choose(), row.names = 1)"
+dat = data.matrix(dat)
+
+#设定相关系数r的对应颜色
+"col_fun = colorRamp2(c(-0.7, 0, 0.7), c('green', 'white', 'red'))"
+#为每个变量设定颜色
+grid.col = c(
+"  'PD1'= rainbow(8)[1], "
+"  'PD2' = rainbow(8)[2], "
+"  'CTLA4' = rainbow(8)[3],"
+"  'HVEM' = rainbow(8)[4],"
+"  'CD200R1' = rainbow(8)[5], "
+"  'TIM3' = rainbow(8)[6],"
+"  'TIGIT' = rainbow(8)[7],"
+  'CD47' = rainbow(8)[8]
+)
+
+
+#作图
+"chordDiagram(dat, col = col_fun, grid.col = grid.col, transparency = 0.3)"
+circos.clear()
+dev.off()

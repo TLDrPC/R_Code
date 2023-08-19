@@ -1,0 +1,116 @@
+#《开讲啦 冠璋》网课分享代码，使用方法请关注B站 “南四环西路”，谢谢。
+library(rms)
+library(survival)
+"data=read.delim(file.choose(),row.names=1)"
+h=nrow(data)
+w=ncol(data)
+os=as.numeric(data$OS)  
+censor=as.numeric(data$Censor)  
+names=colnames(data)[3:w]
+"S <- Surv(os,censor)"
+
+attach(data)
+
+"coxm<-cph(Surv(OS,Censor)~Risk_Score+PRS_type+Histology+Gender+Age+Radio+Chemo+IDH_mutation+codel1p19q,x=T,y=T,data=data,surv=T)"
+scoxm<-step(coxm)
+
+"factor=c(""Risk_Score+PRS_type+Histology+Age+Radio+IDH_mutation"")     #根据上一步的结果选择factors"
+"ddist <- datadist(Risk_Score,PRS_type,Histology,Age,Radio,IDH_mutation)   #根据上一步代码进行调整"
+options(datadist='ddist')
+
+"f=cph(as.formula(paste(""S"",factor,sep=""~"")), x = T, y = T, surv = T)"
+surv=Survival(f)
+"nom <- nomogram(f, fun=list(function(x) surv(360, x), function(x) surv(720, x), function(x) surv(1080, x), function(x) surv(1800, x), function(x) surv(3600, x)), lp=F, funlabel=c(""1-year survival"", ""2-year survival"", ""3-year survival"",""5-year survival"",""10-year survival""), fun.at=seq(0.90,0.1,by=-0.1))  "
+"plot(nom,cex.axis=1,xfrac=0.2)"
+
+1-rcorrcens(S~predict(f))
+
+"#nom <- nomogram(f, fun=list(function(x) surv(6, x),function(x) surv(12, x), function(x) surv(24, x), function(x) surv(36, x), function(x) surv(60, x)), lp=F, funlabel=c(""6-month survival"", ""1-year survival"", ""2-year survival"", ""3-year survival"",""5-year survival""), fun.at=seq(0.95,0.05,by=-0.1)) "
+
+#求单一因素的C-Index
+"x1=c(""Risk_Score"")"
+"x2=c(""PRS_type"")"
+"x3=c(""Histology"")"
+"x4=c(""Age"")"
+"x5=c(""Radio"")"
+"x6=c(""IDH_mutation"")"
+ddist1 <- datadist(Risk_Score)
+ddist2 <- datadist(PRS_type)
+ddist3 <- datadist(Histology)
+ddist4 <- datadist(Age)
+ddist5 <- datadist(Radio)
+ddist6 <- datadist(IDH_mutation)
+options(datadist='ddist1')
+options(datadist='ddist2')
+options(datadist='ddist3')
+options(datadist='ddist4')
+options(datadist='ddist5')
+options(datadist='ddist6')
+"f1=cph(as.formula(paste(""S"",x1,sep=""~"")),x=T,y=T,surv=T)"
+"f2=cph(as.formula(paste(""S"",x2,sep=""~"")),x=T,y=T,surv=T)"
+"f3=cph(as.formula(paste(""S"",x3,sep=""~"")),x=T,y=T,surv=T)"
+"f4=cph(as.formula(paste(""S"",x4,sep=""~"")),x=T,y=T,surv=T)"
+"f5=cph(as.formula(paste(""S"",x5,sep=""~"")),x=T,y=T,surv=T)"
+"f6=cph(as.formula(paste(""S"",x6,sep=""~"")),x=T,y=T,surv=T)"
+1-rcorrcens(S~predict(f1))
+1-rcorrcens(S~predict(f2))
+1-rcorrcens(S~predict(f3))
+1-rcorrcens(S~predict(f4))
+1-rcorrcens(S~predict(f5))
+1-rcorrcens(S~predict(f6))
+
+#绘制预测效果图，m值越小，预测点越多
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=360)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=360, m=30, B=100)"
+"plot(cal,xlim=c(0,1),ylim=c(0,1),col=""red"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=720)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=720, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""orchid"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=1080)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=1080, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""orange"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=1800)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=1800, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""limegreen"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=3600)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=3600, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""black"")"
+
+
+#外部验证
+"factor=c(""Risk_Score+PRS_type+Histology+Age+Radio+IDH_mutation"")"
+"ddist <- datadist(""Risk_Score,PRS_type,Histology,Age,Radio,IDH_mutation"")"
+options(datadist='ddist')
+
+"data2=read.delim(file.choose(),row.names=1)"
+os=as.numeric(data2$OS) 
+censor=as.numeric(data2$Censor)
+"fev <- cph(Surv(os, censor) ~ predict(f, newdata=data2), x=T, y=T, surv=T)"
+"validate(fev, method=""boot"", B=1000, dxy=T)"
+"rcorrcens(Surv(os, censor) ~ predict(f, newdata=data2), data =data2)"
+"1-rcorrcens(Surv(os, censor) ~ predict(f, newdata=data2), data = data2)"
+
+#绘制验证组预测效果图
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=360)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=360, m=30, B=100)"
+"plot(cal,xlim=c(0,1),ylim=c(0,1),col=""red"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=720)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=720, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""orchid"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=1080)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=1080, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""orange"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=1800)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=1800, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""limegreen"")"
+"coxm<-cph(as.formula(paste(""S"",factor,sep=""~"")),x=T,y=T,data=data,surv=T,time.inc=3600)"
+"cal<-calibrate(coxm, cmethod='KM', method='boot', u=3600, m=30, B=100)"
+par(new=T)
+"plot(cal,xlim=c(0,1),ylim=c(0,1),xlab='',ylab='',xaxt='n',yaxt='n',col=""black"")"

@@ -1,0 +1,6 @@
+#《开讲啦 冠璋》网课分享代码，使用方法请关注B站 “南四环西路”，谢谢。
+library(ggplot2)
+"dat = read.delim(file.choose(), head = T, row.names = 1)"
+"ggplot(data = dat, aes(FC, P, colour=COL)) +  geom_point(alpha=0.4, size=1.75) +"
+"  theme_bw()+ xlab(""log2(fold change)"") + ylab(""-log10(p-value)"") + "
+"  scale_colour_manual(values=c(""dodgerblue"",""darkgrey"",""firebrick2""))"
